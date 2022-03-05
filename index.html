@@ -6,46 +6,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
-    <style>
-      body{
-        font-family: Arial, Helvetica, sans-serif;
-      }
-      .grid {
-        display: grid;
-        grid-template-columns: repeat(4, 100px);
-        grid-template-rows: repeat(4, 100px);
-
-      } 
-      .grid > * {
-        background-color: #ffbf94;
-        border-radius: 5px;
-        padding: 7px;
-        margin: 1px;
-      }
-    </style>
     
 </head>
 <body>
+  
     <p>Hey! This is 2048 game</p>
 
-  <div class="grid">
-    <div>Элемент 1</div>
-    <div>Элемент 2</div>
-    <div>Элемент 3</div>
-    <div>Элемент 4</div>
-    <div>Элемент 5</div>
-    <div>Элемент 6</div>
-    <div>Элемент 7</div>
-    <div>Элемент 8</div>
-    <div>Элемент 9</div>
-    <div>Элемент 10</div>
-    <div>Элемент 11</div>
-    <div>Элемент 12</div>
-    <div>Элемент 13</div>
-    <div>Элемент 14</div>
-    <div>Элемент 15</div>
-    <div>Элемент 16</div>
+  <div class="grid" id="net">
+    <div id="cell00">value</div>
+    <div id="cell01"></div>
+    <div id="cell02"></div>
+    <div id="cell03"></div>
+    <div id="cell10"></div>
+    <div id="cell11"></div>
+    <div id="cell12"></div>
+    <div id="cell13"></div>
+    <div id="cell20"></div>
+    <div id="cell21"></div>
+    <div id="cell22"></div>
+    <div id="cell23"></div>
+    <div id="cell30"></div>
+    <div id="cell31"></div>
+    <div id="cell32"></div>
+    <div id="cell33"></div>
   </div>
     
+
+
+  <script src="./magic.js"></script>
 </body>
+
 </html>

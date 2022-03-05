@@ -1,13 +1,13 @@
-table {
-    border-collapse: collapse;
-    /*убираем пустые промежутки между ячейками*/
-    border: 10px solid black;
-    /*устанавливаем для таблицы внешнюю границу серого цвета толщиной Npx*/
- }
+.grid {
+    display: grid;
+    grid-template-columns: repeat(4, 100px);
+    grid-template-rows: repeat(4, 100px);
 
-caption {
-    caption-side: bottom;
-    text-align: right;
-    padding: 10px 0;
-    font-size: 14px;
-}
+} 
+
+.grid > * {
+    background-color: #ecc3a8;
+    border-radius: 5px;
+    padding: 7px;
+    margin: 1px;
+ }
