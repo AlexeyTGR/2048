@@ -1,0 +1,13 @@
+table {
+    border-collapse: collapse;
+    /*убираем пустые промежутки между ячейками*/
+    border: 10px solid black;
+    /*устанавливаем для таблицы внешнюю границу серого цвета толщиной Npx*/
+ }
+
+caption {
+    caption-side: bottom;
+    text-align: right;
+    padding: 10px 0;
+    font-size: 14px;
+}
