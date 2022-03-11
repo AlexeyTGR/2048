@@ -22,15 +22,21 @@ let element32 = document.getElementById('cell32');
 let element33 = document.getElementById('cell33');
 
 const valueArray = [[8, 4, 4, 4], 
-                    [2, 2, 2, 2], 
-                    [null, 4, null, 2],
+                    [2, null, 2, 2], 
+                    [null, null, null, 4],
                     [null, null, null, null]];
 
 refresh();
 
 document.addEventListener('keydown', function(event){
-    if (event.code == 'ArrowLeft') moveLeft()
-    else if (event.code == 'ArrowRight') moveRight()
+    if (event.code == 'ArrowLeft') {
+        moveLeft()
+        refresh();
+    }
+    else if (event.code == 'ArrowRight') {
+        moveRight()
+        refresh();
+    }
     else if (event.code == 'ArrowUp') moveUp()
     else if (event.code == 'ArrowDown') moveDown();
 });
@@ -38,32 +44,56 @@ document.addEventListener('keydown', function(event){
 function moveLeft() {
 
     valueArray.forEach(function(elem){
-        elem.forEach(function(item, index){
-            for (let i = 0; i < 4; i++) {
-              if (!elem[i]) {
-                elem[i] = elem[i+1];
-                elem[i+1] = undefined;
-                elem.splice(4)
-              } 
-              }
-              if (elem[index] == elem[index + 1]) {
-                elem[index] *= 2;
-                elem[index + 1] = undefined
-                elem.splice(4)
-                }       
-        })        
-    })
-    
-   
-    // valueArray[1][0] = valueArray[1][1];
-    refresh();
+        
+        for (let k = 0; k < elem.length; k++) {
+            if (elem[k] == null) {
+                elem.splice(k, 1);
+                k--
+            }
+        }
 
+        for (let j = 0; j < elem.length; j++){
+            
+            if (elem[j] == null) elem.splice(j, 1)
+            else if (elem[j] == elem[j+1]) {
+              elem[j] *= 2;
+              elem.splice(j+1, 1);
+            }
+        } 
+                
+        while (elem.length < 4) elem.push(null)
+    })
 };
 
 function moveRight() {
-    for (let i = 0; i < 4; i++) {
 
-    }
+    valueArray.forEach(function(elem){
+        
+        elem.reverse()
+
+        for (let k = 0; k < elem.length; k++) {
+            if (elem[k] == null) {
+                elem.splice(k, 1);
+                k--
+            }
+        }
+
+        for (let j = 0; j < elem.length; j++){
+            
+            if (elem[j] == null) elem.splice(j, 1)
+            else if (elem[j] == elem[j+1]) {
+              elem[j] *= 2;
+              elem.splice(j+1, 1);
+            }
+        } 
+                
+        while (elem.length < 4) elem.push(null)
+
+        elem.reverse()        
+    })
+    
+   
+    
 };
 
 function moveUp() {};
@@ -71,6 +101,13 @@ function moveUp() {};
 function moveDown() {};
 
 function refresh() {
+
+    for (let i = 0; i < 4; i++){
+        for(let j = 0; j < 4; j++){
+            if (valueArray[i][j] === NaN) {valueArray[i][j] = null}
+        }
+    }
+
     element00.innerText = valueArray[0][0];
     element01.innerText = valueArray[0][1];
     element02.innerText = valueArray[0][2];
@@ -90,5 +127,6 @@ function refresh() {
     element31.innerText = valueArray[3][1];
     element32.innerText = valueArray[3][2];
     element33.innerText = valueArray[3][3];
+    
 }
 
