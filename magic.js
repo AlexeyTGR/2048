@@ -21,24 +21,54 @@ let element31 = document.getElementById('cell31');
 let element32 = document.getElementById('cell32');
 let element33 = document.getElementById('cell33');
 
-const valueArray = [[null, null, null, null], 
-                    [null, null, null, null], 
-                    [null, null, null, null],
+const valueArray = [[8, 4, 4, 4], 
+                    [2, 2, 2, 2], 
+                    [null, 4, null, 2],
                     [null, null, null, null]];
 
-valueArray[1][1] = 4
+refresh();
 
 document.addEventListener('keydown', function(event){
-    if (event.code == 'ArrowLeft') moveLeft();
-
+    if (event.code == 'ArrowLeft') moveLeft()
+    else if (event.code == 'ArrowRight') moveRight()
+    else if (event.code == 'ArrowUp') moveUp()
+    else if (event.code == 'ArrowDown') moveDown();
 });
 
 function moveLeft() {
+
+    valueArray.forEach(function(elem){
+        elem.forEach(function(item, index){
+            for (let i = 0; i < 4; i++) {
+              if (!elem[i]) {
+                elem[i] = elem[i+1];
+                elem[i+1] = undefined;
+                elem.splice(4)
+              } 
+              }
+              if (elem[index] == elem[index + 1]) {
+                elem[index] *= 2;
+                elem[index + 1] = undefined
+                elem.splice(4)
+                }       
+        })        
+    })
+    
    
-    valueArray[1][0] = valueArray[1][1];
+    // valueArray[1][0] = valueArray[1][1];
     refresh();
 
-}
+};
+
+function moveRight() {
+    for (let i = 0; i < 4; i++) {
+
+    }
+};
+
+function moveUp() {};
+
+function moveDown() {};
 
 function refresh() {
     element00.innerText = valueArray[0][0];
