@@ -41,7 +41,10 @@ document.addEventListener('keydown', function(event){
         moveUp();
         refresh();
     }
-    else if (event.code == 'ArrowDown') moveDown();
+    else if (event.code == 'ArrowDown') {
+        moveDown();
+        refresh();
+    }
 });
 
 function moveLeft() {
@@ -131,7 +134,41 @@ function moveUp() {
     }
 }
 
-function moveDown() {};
+function moveDown() {
+
+    for (let i = 0; i < valueArray.length; i++) {
+
+        let elem = [];
+
+        valueArray.forEach(function(item) {elem.push(item[i])})
+
+        elem.reverse()
+
+        for (let k = 0; k < elem.length; k++) {
+            if (elem[k] == null) {
+                elem.splice(k, 1);
+                k--
+            }
+        }
+
+        for (let j = 0; j < elem.length; j++){
+            
+            if (elem[j] == null) elem.splice(j, 1)
+            else if (elem[j] == elem[j+1]) {
+              elem[j] *= 2;
+              elem.splice(j+1, 1);
+            }
+        } 
+                
+        while (elem.length < 4) elem.push(null)
+        elem.reverse()
+        for (let h = 0; h < valueArray.length; h++) {
+        valueArray[h][i] = elem[h];
+        }
+
+    }
+
+};
 
 function refresh() {
 
