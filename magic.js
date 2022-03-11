@@ -21,10 +21,10 @@ let element31 = document.getElementById('cell31');
 let element32 = document.getElementById('cell32');
 let element33 = document.getElementById('cell33');
 
-const valueArray = [[8, 4, 4, 4], 
-                    [2, null, 2, 2], 
-                    [null, null, null, 4],
-                    [null, null, null, null]];
+const valueArray = [[2, 2, 4, 4], 
+                    [2, 4, 2, 2], 
+                    [4, 2, 2, 4],
+                    [null, 2, 4, null]];
 
 refresh();
 
@@ -37,7 +37,10 @@ document.addEventListener('keydown', function(event){
         moveRight()
         refresh();
     }
-    else if (event.code == 'ArrowUp') moveUp()
+    else if (event.code == 'ArrowUp') {
+        moveUp();
+        refresh();
+    }
     else if (event.code == 'ArrowDown') moveDown();
 });
 
@@ -64,7 +67,7 @@ function moveLeft() {
         while (elem.length < 4) elem.push(null)
     })
 };
-
+/////////////////////////////////////////////////////////////////
 function moveRight() {
 
     valueArray.forEach(function(elem){
@@ -96,17 +99,47 @@ function moveRight() {
     
 };
 
-function moveUp() {};
+function moveUp() {
+    
+    for (let i = 0; i < valueArray.length; i++) {
+
+        let elem = [];
+
+        valueArray.forEach(function(item) {elem.push(item[i])})
+
+        for (let k = 0; k < elem.length; k++) {
+            if (elem[k] == null) {
+                elem.splice(k, 1);
+                k--
+            }
+        }
+
+        for (let j = 0; j < elem.length; j++){
+            
+            if (elem[j] == null) elem.splice(j, 1)
+            else if (elem[j] == elem[j+1]) {
+              elem[j] *= 2;
+              elem.splice(j+1, 1);
+            }
+        } 
+                
+        while (elem.length < 4) elem.push(null)
+        for (let h = 0; h < valueArray.length; h++) {
+        valueArray[h][i] = elem[h];
+        }
+
+    }
+}
 
 function moveDown() {};
 
 function refresh() {
 
-    for (let i = 0; i < 4; i++){
-        for(let j = 0; j < 4; j++){
-            if (valueArray[i][j] === NaN) {valueArray[i][j] = null}
-        }
-    }
+    // for (let i = 0; i < 4; i++){
+    //     for(let j = 0; j < 4; j++){
+    //         if (valueArray[i][j] === NaN) {valueArray[i][j] = null}
+    //     }
+    // }
 
     element00.innerText = valueArray[0][0];
     element01.innerText = valueArray[0][1];
