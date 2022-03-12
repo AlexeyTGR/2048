@@ -28,36 +28,53 @@ const valueArray = [
     [null, null, null, null]
 ];
 
+let oldValuesArr = [];
+let oldValuesStr = '';
+let newValuesArr = [];
+let newValuesStr = '';
+
 nextElement();
 nextElement();
 refresh();
 
 document.addEventListener('keydown', function(event){
     if (event.code == 'ArrowLeft') {
-        moveLeft()
-        nextElement();
-        refresh();
-        isWin();
+        moveLeft();
+        if (checkChanges()) {
+            nextElement();
+            refresh();
+            isWin();
+        }
     }
     else if (event.code == 'ArrowRight') {
-        moveRight()
-        nextElement();
-        refresh();
-        isWin();
+        moveRight();
+        if (checkChanges()) {
+            nextElement();
+            refresh();
+            isWin();
+        }
     }
     else if (event.code == 'ArrowUp') {
         moveUp();
-        nextElement();
-        refresh();
-        isWin();
+        if (checkChanges()) {
+            nextElement();
+            refresh();
+            isWin();
+        }
     }
     else if (event.code == 'ArrowDown') {
         moveDown();
-        nextElement();
-        refresh();
-        isWin();
+        if (checkChanges()) {
+            nextElement();
+            refresh();
+            isWin();
+        }
     }
 });
+
+function checkChanges() {
+    return oldValuesStr === newValuesStr ? false : true
+}
 
 function isWin() {
     valueArray.forEach(function(item){
@@ -102,6 +119,9 @@ function nextElement() {
 
 function moveLeft() {
 
+    oldValuesArr = [...valueArray];
+    oldValuesStr = oldValuesArr.join('');
+
     valueArray.forEach(function(elem){
         
         for (let k = 0; k < elem.length; k++) {
@@ -122,9 +142,16 @@ function moveLeft() {
                 
         while (elem.length < 4) elem.push(null)
     })
+
+    newValuesArr = [...valueArray];
+    newValuesStr = newValuesArr.join('');
+
 };
 /////////////////////////////////////////////////////////////////
 function moveRight() {
+
+    oldValuesArr = [...valueArray];
+    oldValuesStr = oldValuesArr.join('');
 
     valueArray.forEach(function(elem){
         
@@ -151,11 +178,15 @@ function moveRight() {
         elem.reverse()        
     })
     
-   
+    newValuesArr = [...valueArray];
+    newValuesStr = newValuesArr.join('');
     
 };
 
 function moveUp() {
+
+    oldValuesArr = [...valueArray];
+    oldValuesStr = oldValuesArr.join('');
     
     for (let i = 0; i < valueArray.length; i++) {
 
@@ -185,9 +216,16 @@ function moveUp() {
         }
 
     }
+
+    newValuesArr = [...valueArray];
+    newValuesStr = newValuesArr.join('');
+
 }
 
 function moveDown() {
+
+    oldValuesArr = [...valueArray];
+    oldValuesStr = oldValuesArr.join('');
 
     for (let i = 0; i < valueArray.length; i++) {
 
@@ -220,6 +258,9 @@ function moveDown() {
         }
 
     }
+
+    newValuesArr = [...valueArray];
+    newValuesStr = newValuesArr.join('');
 
 };
 
