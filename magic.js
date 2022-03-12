@@ -37,14 +37,14 @@ nextElement();
 nextElement();
 refresh();
 
-document.addEventListener('keydown', function(event){
+document.addEventListener('keydown', function (event) {
     if (event.code == 'ArrowLeft') {
         moveLeft();
         if (checkChanges()) {
             nextElement();
             refresh();
             isWin();
-        }
+        } else isDefeat()
     }
     else if (event.code == 'ArrowRight') {
         moveRight();
@@ -52,7 +52,7 @@ document.addEventListener('keydown', function(event){
             nextElement();
             refresh();
             isWin();
-        }
+        } else isDefeat()
     }
     else if (event.code == 'ArrowUp') {
         moveUp();
@@ -60,7 +60,7 @@ document.addEventListener('keydown', function(event){
             nextElement();
             refresh();
             isWin();
-        }
+        } else isDefeat()
     }
     else if (event.code == 'ArrowDown') {
         moveDown();
@@ -68,7 +68,7 @@ document.addEventListener('keydown', function(event){
             nextElement();
             refresh();
             isWin();
-        }
+        } else isDefeat()
     }
 });
 
@@ -77,42 +77,65 @@ function checkChanges() {
 }
 
 function isWin() {
-    valueArray.forEach(function(item){
-        item.forEach(function(element){
+    valueArray.forEach(function (item) {
+        item.forEach(function (element) {
             if (element == 2048) alert('You WINiamin!')
         })
     })
 }
 
+function isDefeat() {
+    let checkEmptyCell = false;
+    let checkMatch = false;
+
+    valueArray.forEach(function(item){
+        if (item.includes(null)) checkEmptyCell = true
+    });
+
+    stop:
+    for (let i = 0; i < valueArray.length - 1; i++) {
+        for (let j = 0; j < valueArray.length - 1; j++) {
+            if ((valueArray[i][j] == valueArray[i][j + 1]) 
+                || (valueArray[i][j] == valueArray[i + 1][j])) {
+                
+                checkMatch = true;
+                break stop
+            } //else checkMatch = false
+        }
+    }
+
+    if (!(checkMatch || checkEmptyCell)) return alert('YOU DEAD')
+}
+
 function nextElement() {
-    
+
     let arr = [];
-    let a; 
+    let a;
     let b = [];
-        for (let i = 0; i < 4; i++) arr.push(i);
-    
+    for (let i = 0; i < 4; i++) arr.push(i);
+
     arr.sort(() => Math.random() - 0.5)
-    
-    arr.forEach(function(item, index){
-            if (valueArray[item].includes(null)) {
-              a = index
-              return a = arr[a]
-            }
-        })
-    
-    valueArray[a].forEach(function(item, index){
-            if (item == null) {
-              b.push(index)
-            }
-        })
-    
+
+    arr.forEach(function (item, index) {
+        if (valueArray[item].includes(null)) {
+            a = index
+            return a = arr[a]
+        }
+    })
+
+    valueArray[a].forEach(function (item, index) {
+        if (item == null) {
+            b.push(index)
+        }
+    })
+
     b.sort(() => Math.random() - 0.5)
     b = b[0]
 
     let num = Math.random()
-    if (num < 0.8) num = 2
+    if (num < 0.89) num = 2
     else num = 4
-    
+
     valueArray[a][b] = num
 
 }
@@ -122,8 +145,8 @@ function moveLeft() {
     oldValuesArr = [...valueArray];
     oldValuesStr = oldValuesArr.join('');
 
-    valueArray.forEach(function(elem){
-        
+    valueArray.forEach(function (elem) {
+
         for (let k = 0; k < elem.length; k++) {
             if (elem[k] == null) {
                 elem.splice(k, 1);
@@ -131,15 +154,15 @@ function moveLeft() {
             }
         }
 
-        for (let j = 0; j < elem.length; j++){
-            
+        for (let j = 0; j < elem.length; j++) {
+
             if (elem[j] == null) elem.splice(j, 1)
-            else if (elem[j] == elem[j+1]) {
-              elem[j] *= 2;
-              elem.splice(j+1, 1);
+            else if (elem[j] == elem[j + 1]) {
+                elem[j] *= 2;
+                elem.splice(j + 1, 1);
             }
-        } 
-                
+        }
+
         while (elem.length < 4) elem.push(null)
     })
 
@@ -153,8 +176,8 @@ function moveRight() {
     oldValuesArr = [...valueArray];
     oldValuesStr = oldValuesArr.join('');
 
-    valueArray.forEach(function(elem){
-        
+    valueArray.forEach(function (elem) {
+
         elem.reverse()
 
         for (let k = 0; k < elem.length; k++) {
@@ -164,35 +187,35 @@ function moveRight() {
             }
         }
 
-        for (let j = 0; j < elem.length; j++){
-            
+        for (let j = 0; j < elem.length; j++) {
+
             if (elem[j] == null) elem.splice(j, 1)
-            else if (elem[j] == elem[j+1]) {
-              elem[j] *= 2;
-              elem.splice(j+1, 1);
+            else if (elem[j] == elem[j + 1]) {
+                elem[j] *= 2;
+                elem.splice(j + 1, 1);
             }
-        } 
-                
+        }
+
         while (elem.length < 4) elem.push(null)
 
-        elem.reverse()        
+        elem.reverse()
     })
-    
+
     newValuesArr = [...valueArray];
     newValuesStr = newValuesArr.join('');
-    
+
 };
 
 function moveUp() {
 
     oldValuesArr = [...valueArray];
     oldValuesStr = oldValuesArr.join('');
-    
+
     for (let i = 0; i < valueArray.length; i++) {
 
         let elem = [];
 
-        valueArray.forEach(function(item) {elem.push(item[i])})
+        valueArray.forEach(function (item) { elem.push(item[i]) })
 
         for (let k = 0; k < elem.length; k++) {
             if (elem[k] == null) {
@@ -201,18 +224,18 @@ function moveUp() {
             }
         }
 
-        for (let j = 0; j < elem.length; j++){
-            
+        for (let j = 0; j < elem.length; j++) {
+
             if (elem[j] == null) elem.splice(j, 1)
-            else if (elem[j] == elem[j+1]) {
-              elem[j] *= 2;
-              elem.splice(j+1, 1);
+            else if (elem[j] == elem[j + 1]) {
+                elem[j] *= 2;
+                elem.splice(j + 1, 1);
             }
-        } 
-                
+        }
+
         while (elem.length < 4) elem.push(null)
         for (let h = 0; h < valueArray.length; h++) {
-        valueArray[h][i] = elem[h];
+            valueArray[h][i] = elem[h];
         }
 
     }
@@ -231,7 +254,7 @@ function moveDown() {
 
         let elem = [];
 
-        valueArray.forEach(function(item) {elem.push(item[i])})
+        valueArray.forEach(function (item) { elem.push(item[i]) })
 
         elem.reverse()
 
@@ -242,19 +265,19 @@ function moveDown() {
             }
         }
 
-        for (let j = 0; j < elem.length; j++){
-            
+        for (let j = 0; j < elem.length; j++) {
+
             if (elem[j] == null) elem.splice(j, 1)
-            else if (elem[j] == elem[j+1]) {
-              elem[j] *= 2;
-              elem.splice(j+1, 1);
+            else if (elem[j] == elem[j + 1]) {
+                elem[j] *= 2;
+                elem.splice(j + 1, 1);
             }
-        } 
-                
+        }
+
         while (elem.length < 4) elem.push(null)
         elem.reverse()
         for (let h = 0; h < valueArray.length; h++) {
-        valueArray[h][i] = elem[h];
+            valueArray[h][i] = elem[h];
         }
 
     }
@@ -285,6 +308,6 @@ function refresh() {
     element31.innerText = valueArray[3][1];
     element32.innerText = valueArray[3][2];
     element33.innerText = valueArray[3][3];
-    
+
 }
 
