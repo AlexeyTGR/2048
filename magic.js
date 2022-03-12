@@ -21,31 +21,84 @@ let element31 = document.getElementById('cell31');
 let element32 = document.getElementById('cell32');
 let element33 = document.getElementById('cell33');
 
-const valueArray = [[2, 2, 4, 4], 
-                    [2, 4, 2, 2], 
-                    [4, 2, 2, 4],
-                    [null, 2, 4, null]];
+const valueArray = [
+    [null, null, null, null],
+    [null, null, null, null],
+    [null, null, null, null],
+    [null, null, null, null]
+];
 
+nextElement();
+nextElement();
 refresh();
 
 document.addEventListener('keydown', function(event){
     if (event.code == 'ArrowLeft') {
         moveLeft()
+        nextElement();
         refresh();
+        isWin();
     }
     else if (event.code == 'ArrowRight') {
         moveRight()
+        nextElement();
         refresh();
+        isWin();
     }
     else if (event.code == 'ArrowUp') {
         moveUp();
+        nextElement();
         refresh();
+        isWin();
     }
     else if (event.code == 'ArrowDown') {
         moveDown();
+        nextElement();
         refresh();
+        isWin();
     }
 });
+
+function isWin() {
+    valueArray.forEach(function(item){
+        item.forEach(function(element){
+            if (element == 2048) alert('You WINiamin!')
+        })
+    })
+}
+
+function nextElement() {
+    
+    let arr = [];
+    let a; 
+    let b = [];
+        for (let i = 0; i < 4; i++) arr.push(i);
+    
+    arr.sort(() => Math.random() - 0.5)
+    
+    arr.forEach(function(item, index){
+            if (valueArray[item].includes(null)) {
+              a = index
+              return a = arr[a]
+            }
+        })
+    
+    valueArray[a].forEach(function(item, index){
+            if (item == null) {
+              b.push(index)
+            }
+        })
+    
+    b.sort(() => Math.random() - 0.5)
+    b = b[0]
+
+    let num = Math.random()
+    if (num < 0.8) num = 2
+    else num = 4
+    
+    valueArray[a][b] = num
+
+}
 
 function moveLeft() {
 
@@ -171,12 +224,6 @@ function moveDown() {
 };
 
 function refresh() {
-
-    // for (let i = 0; i < 4; i++){
-    //     for(let j = 0; j < 4; j++){
-    //         if (valueArray[i][j] === NaN) {valueArray[i][j] = null}
-    //     }
-    // }
 
     element00.innerText = valueArray[0][0];
     element01.innerText = valueArray[0][1];
