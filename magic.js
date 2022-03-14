@@ -20,17 +20,22 @@ const DEFEAT_MESSAGE = 'YOU DIED';
 const START_NEW_GAME_QUESTION = 'Would you like to start a new game?'
 let winCondition = false;
 let toStringValueArray = null;
-let restoredValueArray = null
+let restoredValueArray = null;
+let scoreCouner = null;
+let bestScore = null;
 
 const newGameButton = document.getElementById('new-game');
 newGameButton.onclick = startNewGame;
-///////////////////////////////////////////
-// myStorage = window.localStorage;
+
+
+
 getLocalStorageValues();
 
+console.log(localStorage, 'LLLSSS')
 function saveGameFieldToLocalStorage() {
-toStringValueArray = JSON.stringify(valueArray)
-localStorage.setItem("gameField", toStringValueArray)
+toStringValueArray = JSON.stringify(valueArray);
+localStorage.setItem("gameField", toStringValueArray);
+localStorage.setItem("scoreCouner", scoreCouner);
 };
 
 function getLocalStorageValues() {
@@ -39,7 +44,9 @@ function getLocalStorageValues() {
         restoredValueArray = JSON.parse(localValue);
         valueArray = restoredValueArray;
         renderGameField();
-    }
+    };
+    let localScore = localStorage.getItem("scoreCouner");
+    scoreCouner = JSON.parse(localScore);
 };
 
 function startNewGame() {
@@ -51,6 +58,7 @@ function startNewGame() {
     });
     createNextElement();
     createNextElement();
+    scoreCouner = null;
     renderGameField();
 };
 
@@ -66,6 +74,7 @@ function makeGameTurn() {
         setTimeout(() => showVictoryMessage(), 0)
     }
     checkDefeatConditions();
+    saveGameFieldToLocalStorage();
 }
 
 function checkChanges() {
@@ -157,6 +166,7 @@ function moveLeft() {
             if (elem[j] == null) elem.splice(j, 1);
             else if (elem[j] == elem[j + 1]) {
                 elem[j] *= 2;
+                scoreCouner += parseInt(elem[j]);
                 elem.splice(j + 1, 1);
             }
         }
@@ -186,6 +196,7 @@ function moveRight() {
             if (elem[j] == null) elem.splice(j, 1)
             else if (elem[j] == elem[j + 1]) {
                 elem[j] *= 2;
+                scoreCouner += parseInt(elem[j]);
                 elem.splice(j + 1, 1);
             }
         }
@@ -235,6 +246,7 @@ function moveUp() {
             if (elem[j] == null) elem.splice(j, 1)
             else if (elem[j] == elem[j + 1]) {
                 elem[j] *= 2;
+                scoreCouner += parseInt(elem[j]);
                 elem.splice(j + 1, 1);
             }
         }
@@ -270,6 +282,7 @@ function moveDown() {
             if (elem[j] == null) elem.splice(j, 1)
             else if (elem[j] == elem[j + 1]) {
                 elem[j] *= 2;
+                scoreCouner += parseInt(elem[j]);
                 elem.splice(j + 1, 1);
             }
         }
@@ -287,9 +300,6 @@ function moveDown() {
 };
 
 function renderGameField() {
-
-    console.log('=====render=====')
-
     document.getElementById('cell00').innerText = valueArray[0][0];
     document.getElementById('cell01').innerText = valueArray[0][1];
     document.getElementById('cell02').innerText = valueArray[0][2];
@@ -310,7 +320,7 @@ function renderGameField() {
     document.getElementById('cell32').innerText = valueArray[3][2];
     document.getElementById('cell33').innerText = valueArray[3][3];
 
-    saveGameFieldToLocalStorage();
+    document.getElementById('score').innerText = scoreCouner;
 };
 
 document.addEventListener('keydown', function (event) {
