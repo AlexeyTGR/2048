@@ -21,7 +21,7 @@ const START_NEW_GAME_QUESTION = 'Would you like to start a new game?'
 let winCondition = false;
 let toStringValueArray = null;
 let restoredValueArray = null;
-let scoreCouner = null;
+let scoreCounter = null;
 let bestScore = null;
 
 const newGameButton = document.getElementById('new-game');
@@ -32,12 +32,12 @@ getLocalStorageValues();
 function saveGameFieldToLocalStorage() {
     toStringValueArray = JSON.stringify(valueArray);
     localStorage.setItem("gameField", toStringValueArray);
-    localStorage.setItem("scoreCouner", scoreCouner);
+    localStorage.setItem("scoreCouner", scoreCounter);
 };
 
 function checkBestScore() {
-    if (+bestScore < +scoreCouner) {
-        bestScore = scoreCouner;
+    if (+bestScore < +scoreCounter) {
+        bestScore = scoreCounter;
         localStorage.setItem("bestScore", bestScore);
     };
 };
@@ -50,7 +50,7 @@ function getLocalStorageValues() {
         renderGameField();
     };
     let localScore = localStorage.getItem("scoreCouner");
-    scoreCouner = JSON.parse(localScore);
+    scoreCounter = JSON.parse(localScore);
     let localBestScore = localStorage.getItem("bestScore");
     bestScore = JSON.parse(localBestScore);
     renderGameField();
@@ -65,7 +65,7 @@ function startNewGame() {
     });
     createNextElement();
     createNextElement();
-    scoreCouner = null;
+    scoreCounter = null;
     renderGameField();
 };
 
@@ -74,7 +74,7 @@ function makeGameTurn() {
     if (isChange) {
         createNextElement();
     };
-    checkWinCondition();
+    checkVictoryCondition();
     renderGameField();
     if (winCondition) {
         setTimeout(() => showVictoryMessage(), 0)
@@ -87,7 +87,7 @@ function checkChanges() {
     return oldValuesStr !== newValuesStr;
 }
 
-function checkWinCondition() {
+function checkVictoryCondition() {
     valueArray.forEach(function (item) {
         item.forEach(function (element) {
             if (element == VALUE_FOR_VICTORY) {
@@ -120,7 +120,8 @@ function checkDefeatConditions() {
         }
     };
     if (!(checkMatch || checkEmptyCell)) {
-        alert(DEFEAT_MESSAGE);
+        setTimeout(() => alert(DEFEAT_MESSAGE), 0)
+        // alert(DEFEAT_MESSAGE);
         let question = confirm(START_NEW_GAME_QUESTION);
         if (question) startNewGame();
     };
@@ -168,7 +169,7 @@ function moveLeft() {
             if (elem[j] == null) elem.splice(j, 1);
             else if (elem[j] == elem[j + 1]) {
                 elem[j] *= 2;
-                scoreCouner += parseInt(elem[j]);
+                scoreCounter += parseInt(elem[j]);
                 elem.splice(j + 1, 1);
             }
         }
@@ -196,7 +197,7 @@ function moveRight() {
             if (elem[j] == null) elem.splice(j, 1)
             else if (elem[j] == elem[j + 1]) {
                 elem[j] *= 2;
-                scoreCouner += parseInt(elem[j]);
+                scoreCounter += parseInt(elem[j]);
                 elem.splice(j + 1, 1);
             }
         }
@@ -243,7 +244,7 @@ function moveUp() {
             if (elem[j] == null) elem.splice(j, 1)
             else if (elem[j] == elem[j + 1]) {
                 elem[j] *= 2;
-                scoreCouner += parseInt(elem[j]);
+                scoreCounter += parseInt(elem[j]);
                 elem.splice(j + 1, 1);
             }
         }
@@ -274,11 +275,10 @@ function moveDown() {
             if (elem[j] == null) elem.splice(j, 1)
             else if (elem[j] == elem[j + 1]) {
                 elem[j] *= 2;
-                scoreCouner += parseInt(elem[j]);
+                scoreCounter += parseInt(elem[j]);
                 elem.splice(j + 1, 1);
             }
         }
-        // elem = doIt(elem);
         while (elem.length < MATRIX_SIZE) elem.push(null)
         elem.reverse();
 
@@ -313,7 +313,7 @@ function renderGameField() {
     document.getElementById('cell32').innerText = valueArray[3][2];
     document.getElementById('cell33').innerText = valueArray[3][3];
 
-    document.getElementById('score').innerText = scoreCouner;
+    document.getElementById('score').innerText = scoreCounter;
     document.getElementById('best-score').innerText = bestScore;
 };
 
@@ -336,22 +336,6 @@ document.addEventListener('keydown', function (event) {
         case 'ArrowDown':
             moveDown();
             makeGameTurn();
-            break;  
+            break;
     }
-    // if (eventType == 'ArrowLeft') {
-    //     moveLeft();
-    //     makeGameTurn();
-    // }
-    // else if (eventType == 'ArrowRight') {
-    //     moveRight();
-    //     makeGameTurn();
-    // }
-    // else if (eventType == 'ArrowUp') {
-    //     moveUp();
-    //     makeGameTurn();
-    // }
-    // else if (eventType == 'ArrowDown') {
-    //     moveDown();
-    //     makeGameTurn();
-    // }
 });
