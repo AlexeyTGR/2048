@@ -14,7 +14,7 @@ let newValuesStr = '';
 const MATRIX_SIZE = 4;
 const COMMON_RANDOM_VALUE = 2;
 const RARE_RANDOM_VALUE = 4;
-const VALUE_FOR_VICTORY = 64;
+const VALUE_FOR_VICTORY = 2048;
 const VICTORY_MESSAGE = 'VICTORY!';
 const DEFEAT_MESSAGE = 'YOU DIED';
 const START_NEW_GAME_QUESTION = 'Would you like to start a new game?'
@@ -27,15 +27,19 @@ let bestScore = null;
 const newGameButton = document.getElementById('new-game');
 newGameButton.onclick = startNewGame;
 
-
-
 getLocalStorageValues();
 
-console.log(localStorage, 'LLLSSS')
 function saveGameFieldToLocalStorage() {
-toStringValueArray = JSON.stringify(valueArray);
-localStorage.setItem("gameField", toStringValueArray);
-localStorage.setItem("scoreCouner", scoreCouner);
+    toStringValueArray = JSON.stringify(valueArray);
+    localStorage.setItem("gameField", toStringValueArray);
+    localStorage.setItem("scoreCouner", scoreCouner);
+};
+
+function checkBestScore() {
+    if (+bestScore < +scoreCouner) {
+        bestScore = scoreCouner;
+        localStorage.setItem("bestScore", bestScore);
+    };
 };
 
 function getLocalStorageValues() {
@@ -47,6 +51,9 @@ function getLocalStorageValues() {
     };
     let localScore = localStorage.getItem("scoreCouner");
     scoreCouner = JSON.parse(localScore);
+    let localBestScore = localStorage.getItem("bestScore");
+    bestScore = JSON.parse(localBestScore);
+    renderGameField();
 };
 
 function startNewGame() {
@@ -63,16 +70,15 @@ function startNewGame() {
 };
 
 function makeGameTurn() {
-
     const isChange = checkChanges();
     if (isChange) {
         createNextElement();
-    }
+    };
     checkWinCondition();
     renderGameField();
     if (winCondition) {
         setTimeout(() => showVictoryMessage(), 0)
-    }
+    };
     checkDefeatConditions();
     saveGameFieldToLocalStorage();
 }
@@ -87,14 +93,14 @@ function checkWinCondition() {
             if (element == VALUE_FOR_VICTORY) {
                 winCondition = true;
             };
-        })
-    })
-}
+        });
+    });
+};
 
 function showVictoryMessage() {
     alert(VICTORY_MESSAGE);
     startNewGame();
-}
+};
 
 function checkDefeatConditions() {
     let checkEmptyCell = false;
@@ -103,24 +109,21 @@ function checkDefeatConditions() {
     valueArray.forEach(function (item) {
         if (item.includes(null)) checkEmptyCell = true
     });
-
     for (let i = 0; i < valueArray.length; i++) {
         for (let j = 0; j < valueArray.length - 1; j++) {
             if (valueArray[i][j] == valueArray[i][j + 1]) checkMatch = true;
         }
-    }
-
+    };
     for (let i = 0; i < valueArray.length - 1; i++) {
         for (let j = 0; j < valueArray.length; j++) {
             if (valueArray[i][j] == valueArray[i + 1][j]) checkMatch = true;
         }
-    }
-
+    };
     if (!(checkMatch || checkEmptyCell)) {
         alert(DEFEAT_MESSAGE);
         let question = confirm(START_NEW_GAME_QUESTION);
         if (question) startNewGame();
-    }
+    };
 };
 
 function createNextElement() {
@@ -161,7 +164,6 @@ function moveLeft() {
                 k--;
             }
         }
-
         for (let j = 0; j < elem.length; j++) {
             if (elem[j] == null) elem.splice(j, 1);
             else if (elem[j] == elem[j + 1]) {
@@ -170,7 +172,6 @@ function moveLeft() {
                 elem.splice(j + 1, 1);
             }
         }
-
         while (elem.length < MATRIX_SIZE) elem.push(null);
     })
 
@@ -191,7 +192,6 @@ function moveRight() {
                 k--;
             }
         }
-
         for (let j = 0; j < elem.length; j++) {
             if (elem[j] == null) elem.splice(j, 1)
             else if (elem[j] == elem[j + 1]) {
@@ -200,7 +200,6 @@ function moveRight() {
                 elem.splice(j + 1, 1);
             }
         }
-
         while (elem.length < MATRIX_SIZE) elem.push(null)
         elem.reverse();
     })
@@ -234,14 +233,12 @@ function moveUp() {
     for (let i = 0; i < valueArray.length; i++) {
         let elem = [];
         valueArray.forEach(function (item) { elem.push(item[i]) });
-
         for (let k = 0; k < elem.length; k++) {
             if (elem[k] == null) {
                 elem.splice(k, 1);
                 k--;
             }
         }
-
         for (let j = 0; j < elem.length; j++) {
             if (elem[j] == null) elem.splice(j, 1)
             else if (elem[j] == elem[j + 1]) {
@@ -250,14 +247,11 @@ function moveUp() {
                 elem.splice(j + 1, 1);
             }
         }
-        // elem = doIt(elem);
-
         while (elem.length < MATRIX_SIZE) elem.push(null)
         for (let h = 0; h < valueArray.length; h++) {
             valueArray[h][i] = elem[h];
         }
     }
-
     newValuesArr = [...valueArray];
     newValuesStr = newValuesArr.join('');
 };
@@ -270,14 +264,12 @@ function moveDown() {
         let elem = [];
         valueArray.forEach(function (item) { elem.push(item[i]) });
         elem.reverse();
-
         for (let k = 0; k < elem.length; k++) {
             if (elem[k] == null) {
                 elem.splice(k, 1);
                 k--;
             }
         }
-
         for (let j = 0; j < elem.length; j++) {
             if (elem[j] == null) elem.splice(j, 1)
             else if (elem[j] == elem[j + 1]) {
@@ -294,12 +286,13 @@ function moveDown() {
             valueArray[h][i] = elem[h];
         }
     }
-
     newValuesArr = [...valueArray];
     newValuesStr = newValuesArr.join('');
 };
 
 function renderGameField() {
+    checkBestScore();
+
     document.getElementById('cell00').innerText = valueArray[0][0];
     document.getElementById('cell01').innerText = valueArray[0][1];
     document.getElementById('cell02').innerText = valueArray[0][2];
@@ -321,25 +314,44 @@ function renderGameField() {
     document.getElementById('cell33').innerText = valueArray[3][3];
 
     document.getElementById('score').innerText = scoreCouner;
+    document.getElementById('best-score').innerText = bestScore;
 };
 
 document.addEventListener('keydown', function (event) {
     const eventType = event.code;
 
-    if (eventType == 'ArrowLeft') {
-        moveLeft();
-        makeGameTurn();
+    switch (eventType) {
+        case 'ArrowLeft':
+            moveLeft();
+            makeGameTurn();
+            break;
+        case 'ArrowRight':
+            moveRight();
+            makeGameTurn();
+            break;
+        case 'ArrowUp':
+            moveUp();
+            makeGameTurn();
+            break;
+        case 'ArrowDown':
+            moveDown();
+            makeGameTurn();
+            break;  
     }
-    else if (eventType == 'ArrowRight') {
-        moveRight();
-        makeGameTurn();
-    }
-    else if (eventType == 'ArrowUp') {
-        moveUp();
-        makeGameTurn();
-    }
-    else if (eventType == 'ArrowDown') {
-        moveDown();
-        makeGameTurn();
-    }
+    // if (eventType == 'ArrowLeft') {
+    //     moveLeft();
+    //     makeGameTurn();
+    // }
+    // else if (eventType == 'ArrowRight') {
+    //     moveRight();
+    //     makeGameTurn();
+    // }
+    // else if (eventType == 'ArrowUp') {
+    //     moveUp();
+    //     makeGameTurn();
+    // }
+    // else if (eventType == 'ArrowDown') {
+    //     moveDown();
+    //     makeGameTurn();
+    // }
 });
