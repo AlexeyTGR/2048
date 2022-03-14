@@ -1,6 +1,6 @@
 "use strict";
 
-const valueArray = [
+let valueArray = [
     [null, null, null, null],
     [null, null, null, null],
     [null, null, null, null],
@@ -14,48 +14,65 @@ let newValuesStr = '';
 const MATRIX_SIZE = 4;
 const COMMON_RANDOM_VALUE = 2;
 const RARE_RANDOM_VALUE = 4;
-const VALUE_FOR_VICTORY = 8;
+const VALUE_FOR_VICTORY = 64;
 const VICTORY_MESSAGE = 'VICTORY!';
 const DEFEAT_MESSAGE = 'YOU DIED';
 const START_NEW_GAME_QUESTION = 'Would you like to start a new game?'
 let winCondition = false;
+let toStringValueArray = null;
+let restoredValueArray = null
 
 const newGameButton = document.getElementById('new-game');
-
 newGameButton.onclick = startNewGame;
+///////////////////////////////////////////
+// myStorage = window.localStorage;
+getLocalStorageValues();
 
+function saveGameFieldToLocalStorage() {
+toStringValueArray = JSON.stringify(valueArray)
+localStorage.setItem("gameField", toStringValueArray)
+};
+
+function getLocalStorageValues() {
+    if (localStorage["gameField"]) {
+        let localValue = localStorage.getItem("gameField");
+        restoredValueArray = JSON.parse(localValue);
+        valueArray = restoredValueArray;
+        renderGameField();
+    }
+};
 
 function startNewGame() {
     winCondition = false;
-    valueArray.forEach( (item) => {
-        for (let i = 0; i < valueArray.length; i++){
+    valueArray.forEach((item) => {
+        for (let i = 0; i < valueArray.length; i++) {
             item[i] = null;
         }
     });
-    nextElement();
-    nextElement();
-    refresh();
+    createNextElement();
+    createNextElement();
+    renderGameField();
 };
 
 function makeGameTurn() {
- 
+
     const isChange = checkChanges();
     if (isChange) {
-        nextElement();
+        createNextElement();
     }
-    isWin();
-    refresh();
+    checkWinCondition();
+    renderGameField();
     if (winCondition) {
-        setTimeout(() => showVictoryMessage(), 500)
-    } 
-    isDefeat();
+        setTimeout(() => showVictoryMessage(), 0)
+    }
+    checkDefeatConditions();
 }
 
 function checkChanges() {
-    return oldValuesStr === newValuesStr ? false : true;
+    return oldValuesStr !== newValuesStr;
 }
 
-function isWin() {
+function checkWinCondition() {
     valueArray.forEach(function (item) {
         item.forEach(function (element) {
             if (element == VALUE_FOR_VICTORY) {
@@ -70,23 +87,23 @@ function showVictoryMessage() {
     startNewGame();
 }
 
-function isDefeat() {
+function checkDefeatConditions() {
     let checkEmptyCell = false;
     let checkMatch = false;
 
-    valueArray.forEach(function(item){
+    valueArray.forEach(function (item) {
         if (item.includes(null)) checkEmptyCell = true
     });
 
-    for (let i = 0; i < valueArray.length; i++){
+    for (let i = 0; i < valueArray.length; i++) {
         for (let j = 0; j < valueArray.length - 1; j++) {
             if (valueArray[i][j] == valueArray[i][j + 1]) checkMatch = true;
         }
     }
-   
+
     for (let i = 0; i < valueArray.length - 1; i++) {
         for (let j = 0; j < valueArray.length; j++) {
-            if (valueArray[i][j] == valueArray[i+1][j]) checkMatch = true;
+            if (valueArray[i][j] == valueArray[i + 1][j]) checkMatch = true;
         }
     }
 
@@ -97,18 +114,16 @@ function isDefeat() {
     }
 };
 
-function nextElement() {
+function createNextElement() {
     let arr = [];
     let a = null;
     let b = [];
-    for (let i = 0; i < valueArray.length; i++) arr.push(i);
+    for (let i = 0; i < valueArray.length; i++) { arr.push(i); }
 
     arr.sort(() => Math.random() - 0.5);
     arr.forEach(function (item, index) {
         if (valueArray[item].includes(null)) {
-            a = index;
-
-            return a = arr[a];
+            a = arr[index];
         }
     })
 
@@ -182,7 +197,25 @@ function moveRight() {
     newValuesArr = [...valueArray];
     newValuesStr = newValuesArr.join('');
 };
+// function doIt(line) {
+//     console.log('here');
+//     let elem = [...line];
+//     for (let k = 0; k < elem.length; k++) {
+//         if (elem[k] == null) {
+//             elem.splice(k, 1);
+//             k--;
+//         }
+//     }
 
+//     for (let j = 0; j < elem.length; j++) {
+//         if (elem[j] == null) elem.splice(j, 1)
+//         else if (elem[j] == elem[j + 1]) {
+//             elem[j] *= 2;
+//             elem.splice(j + 1, 1);
+//         }
+//     }
+//     return elem;
+// }
 function moveUp() {
     oldValuesArr = [...valueArray];
     oldValuesStr = oldValuesArr.join('');
@@ -190,6 +223,7 @@ function moveUp() {
     for (let i = 0; i < valueArray.length; i++) {
         let elem = [];
         valueArray.forEach(function (item) { elem.push(item[i]) });
+
         for (let k = 0; k < elem.length; k++) {
             if (elem[k] == null) {
                 elem.splice(k, 1);
@@ -204,6 +238,7 @@ function moveUp() {
                 elem.splice(j + 1, 1);
             }
         }
+        // elem = doIt(elem);
 
         while (elem.length < MATRIX_SIZE) elem.push(null)
         for (let h = 0; h < valueArray.length; h++) {
@@ -238,7 +273,7 @@ function moveDown() {
                 elem.splice(j + 1, 1);
             }
         }
-
+        // elem = doIt(elem);
         while (elem.length < MATRIX_SIZE) elem.push(null)
         elem.reverse();
 
@@ -251,7 +286,10 @@ function moveDown() {
     newValuesStr = newValuesArr.join('');
 };
 
-function refresh() {
+function renderGameField() {
+
+    console.log('=====render=====')
+
     document.getElementById('cell00').innerText = valueArray[0][0];
     document.getElementById('cell01').innerText = valueArray[0][1];
     document.getElementById('cell02').innerText = valueArray[0][2];
@@ -271,12 +309,14 @@ function refresh() {
     document.getElementById('cell31').innerText = valueArray[3][1];
     document.getElementById('cell32').innerText = valueArray[3][2];
     document.getElementById('cell33').innerText = valueArray[3][3];
+
+    saveGameFieldToLocalStorage();
 };
 
 document.addEventListener('keydown', function (event) {
     const eventType = event.code;
-    
-    if (eventType== 'ArrowLeft') {
+
+    if (eventType == 'ArrowLeft') {
         moveLeft();
         makeGameTurn();
     }
