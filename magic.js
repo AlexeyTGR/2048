@@ -1,38 +1,56 @@
 "use strict";
 
-let valueArray = [
-    [null, null, null, null],
-    [null, null, null, null],
-    [null, null, null, null],
-    [null, null, null, null]
-];
-
+let valueArray = [];
 let oldValuesArr = [];
 let oldValuesStr = '';
 let newValuesArr = [];
 let newValuesStr = '';
-const MATRIX_SIZE = 4;
+let matrixSize = null;
 const COMMON_RANDOM_VALUE = 2;
 const RARE_RANDOM_VALUE = 4;
 const VALUE_FOR_VICTORY = 2048;
 const VICTORY_MESSAGE = 'VICTORY!';
 const DEFEAT_MESSAGE = 'YOU DIED';
 const START_NEW_GAME_QUESTION = 'Would you like to start a new game?'
+const FIELD_SIZE_QUESTION = 'Input the size of game field';
 let winCondition = false;
 let toStringValueArray = null;
-let restoredValueArray = null;
 let scoreCounter = null;
 let bestScore = null;
-
 const newGameButton = document.getElementById('new-game');
 newGameButton.onclick = startNewGame;
 
 getLocalStorageValues();
+createGameField();
+renderGameField();
+
+function createGameField() {
+    for (let row = 0; row < matrixSize; row++) {
+        for (let column = 0; column < matrixSize; column++) {
+            let divElement = document.createElement('div');
+            net.append(divElement);
+            divElement.id = `cell${row}${column}`;
+        }
+    }
+    let styleAttribute = document.querySelector('.grid');
+    styleAttribute.setAttribute('style', `display: grid; 
+                                grid-template-columns: repeat(${matrixSize}, 100px); 
+                                grid-template-rows: repeat(${matrixSize}, 100px);
+                                justify-content: center;`);
+}
+
+function removeGameField() {
+    let element = document.getElementById("net");
+    while (element.firstChild) {
+        element.removeChild(element.firstChild);
+    }
+}
 
 function saveGameFieldToLocalStorage() {
     toStringValueArray = JSON.stringify(valueArray);
     localStorage.setItem("gameField", toStringValueArray);
     localStorage.setItem("scoreCouner", scoreCounter);
+    localStorage.setItem("matrixSize", matrixSize)
 };
 
 function checkBestScore() {
@@ -43,23 +61,38 @@ function checkBestScore() {
 };
 
 function getLocalStorageValues() {
+    matrixSize = localStorage.getItem("matrixSize");
     if (localStorage["gameField"]) {
         let localValue = localStorage.getItem("gameField");
-        restoredValueArray = JSON.parse(localValue);
-        valueArray = restoredValueArray;
-        renderGameField();
-    };
+        valueArray = JSON.parse(localValue);
+    }
     let localScore = localStorage.getItem("scoreCouner");
     scoreCounter = JSON.parse(localScore);
     let localBestScore = localStorage.getItem("bestScore");
     bestScore = JSON.parse(localBestScore);
-    renderGameField();
 };
+
+function createValueArray() {
+    valueArray = new Array(matrixSize);
+    for (let row = 0; row < matrixSize; row++) {
+        valueArray[row] = new Array(matrixSize)
+    };
+    valueArray.forEach((item) => {
+        for (let i = 0; i < matrixSize; i++) {
+            item[i] = null;
+        }
+    });
+}
 
 function startNewGame() {
     winCondition = false;
+    removeGameField();
+    let askMatrixSize = prompt(FIELD_SIZE_QUESTION, 4);
+    matrixSize = askMatrixSize;
+    createValueArray();
+    createGameField();
     valueArray.forEach((item) => {
-        for (let i = 0; i < valueArray.length; i++) {
+        for (let i = 0; i < matrixSize; i++) {
             item[i] = null;
         }
     });
@@ -109,19 +142,18 @@ function checkDefeatConditions() {
     valueArray.forEach(function (item) {
         if (item.includes(null)) checkEmptyCell = true
     });
-    for (let i = 0; i < valueArray.length; i++) {
-        for (let j = 0; j < valueArray.length - 1; j++) {
+    for (let i = 0; i < matrixSize; i++) {
+        for (let j = 0; j < matrixSize - 1; j++) {
             if (valueArray[i][j] == valueArray[i][j + 1]) checkMatch = true;
         }
     };
-    for (let i = 0; i < valueArray.length - 1; i++) {
-        for (let j = 0; j < valueArray.length; j++) {
+    for (let i = 0; i < matrixSize - 1; i++) {
+        for (let j = 0; j < matrixSize; j++) {
             if (valueArray[i][j] == valueArray[i + 1][j]) checkMatch = true;
         }
     };
     if (!(checkMatch || checkEmptyCell)) {
         setTimeout(() => alert(DEFEAT_MESSAGE), 0)
-        // alert(DEFEAT_MESSAGE);
         let question = confirm(START_NEW_GAME_QUESTION);
         if (question) startNewGame();
     };
@@ -131,19 +163,19 @@ function createNextElement() {
     let arr = [];
     let a = null;
     let b = [];
-    for (let i = 0; i < valueArray.length; i++) { arr.push(i); }
-
+    for (let i = 0; i < matrixSize; i++) { 
+        arr.push(i); 
+    }
     arr.sort(() => Math.random() - 0.5);
     arr.forEach(function (item, index) {
         if (valueArray[item].includes(null)) {
             a = arr[index];
         }
-    })
+    });
 
     valueArray[a].forEach(function (item, index) {
         if (item == null) b.push(index);
-    })
-
+    });
     b.sort(() => Math.random() - 0.5)
     b = b[0]
 
@@ -173,7 +205,7 @@ function moveLeft() {
                 elem.splice(j + 1, 1);
             }
         }
-        while (elem.length < MATRIX_SIZE) elem.push(null);
+        while (elem.length < matrixSize) elem.push(null);
     })
 
     newValuesArr = [...valueArray];
@@ -201,7 +233,7 @@ function moveRight() {
                 elem.splice(j + 1, 1);
             }
         }
-        while (elem.length < MATRIX_SIZE) elem.push(null)
+        while (elem.length < matrixSize) elem.push(null)
         elem.reverse();
     })
 
@@ -231,7 +263,7 @@ function moveUp() {
     oldValuesArr = [...valueArray];
     oldValuesStr = oldValuesArr.join('');
 
-    for (let i = 0; i < valueArray.length; i++) {
+    for (let i = 0; i < matrixSize; i++) {
         let elem = [];
         valueArray.forEach(function (item) { elem.push(item[i]) });
         for (let k = 0; k < elem.length; k++) {
@@ -248,8 +280,8 @@ function moveUp() {
                 elem.splice(j + 1, 1);
             }
         }
-        while (elem.length < MATRIX_SIZE) elem.push(null)
-        for (let h = 0; h < valueArray.length; h++) {
+        while (elem.length < matrixSize) elem.push(null)
+        for (let h = 0; h < matrixSize; h++) {
             valueArray[h][i] = elem[h];
         }
     }
@@ -261,7 +293,7 @@ function moveDown() {
     oldValuesArr = [...valueArray];
     oldValuesStr = oldValuesArr.join('');
 
-    for (let i = 0; i < valueArray.length; i++) {
+    for (let i = 0; i < matrixSize; i++) {
         let elem = [];
         valueArray.forEach(function (item) { elem.push(item[i]) });
         elem.reverse();
@@ -279,10 +311,10 @@ function moveDown() {
                 elem.splice(j + 1, 1);
             }
         }
-        while (elem.length < MATRIX_SIZE) elem.push(null)
+        while (elem.length < matrixSize) elem.push(null)
         elem.reverse();
 
-        for (let h = 0; h < valueArray.length; h++) {
+        for (let h = 0; h < matrixSize; h++) {
             valueArray[h][i] = elem[h];
         }
     }
@@ -293,26 +325,11 @@ function moveDown() {
 function renderGameField() {
     checkBestScore();
 
-    document.getElementById('cell00').innerText = valueArray[0][0];
-    document.getElementById('cell01').innerText = valueArray[0][1];
-    document.getElementById('cell02').innerText = valueArray[0][2];
-    document.getElementById('cell03').innerText = valueArray[0][3];
-
-    document.getElementById('cell10').innerText = valueArray[1][0];
-    document.getElementById('cell11').innerText = valueArray[1][1];
-    document.getElementById('cell12').innerText = valueArray[1][2];
-    document.getElementById('cell13').innerText = valueArray[1][3];
-
-    document.getElementById('cell20').innerText = valueArray[2][0];
-    document.getElementById('cell21').innerText = valueArray[2][1];
-    document.getElementById('cell22').innerText = valueArray[2][2];
-    document.getElementById('cell23').innerText = valueArray[2][3];
-
-    document.getElementById('cell30').innerText = valueArray[3][0];
-    document.getElementById('cell31').innerText = valueArray[3][1];
-    document.getElementById('cell32').innerText = valueArray[3][2];
-    document.getElementById('cell33').innerText = valueArray[3][3];
-
+    for (let i = 0; i < matrixSize; i++) {
+        for (let j = 0; j < matrixSize; j++) {
+            document.getElementById(`cell${i}${j}`).innerText = valueArray[i][j]
+        }
+    }
     document.getElementById('score').innerText = scoreCounter;
     document.getElementById('best-score').innerText = bestScore;
 };
